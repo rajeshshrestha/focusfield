@@ -40,9 +40,11 @@ fi
 TMP="$(mktemp -d)"
 trap 'rm -rf -- "$TMP"' EXIT
 mkdir -p "$TMP/DEBIAN" "$TMP/usr/bin" "$TMP/usr/share/focusfield/assets" \
-         "$TMP/usr/share/applications" "$TMP/usr/share/doc/focusfield"
+         "$TMP/usr/share/applications" "$TMP/usr/share/doc/focusfield" \
+         "$TMP/usr/share/icons/hicolor/256x256/apps"
 install -m 644 "$ROOT/app.py" "$ROOT/core.py" "$TMP/usr/share/focusfield/"
 install -m 644 "$ROOT/assets/focusfield.png" "$TMP/usr/share/focusfield/assets/"
+install -m 644 "$ROOT/assets/focusfield.png" "$TMP/usr/share/icons/hicolor/256x256/apps/"
 install -m 644 "$ROOT/README.md" "$ROOT/CHANGELOG.md" "$TMP/usr/share/doc/focusfield/"
 cat > "$TMP/usr/bin/focusfield" <<'LAUNCHER'
 #!/bin/sh
