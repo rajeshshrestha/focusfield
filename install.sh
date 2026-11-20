@@ -4,7 +4,7 @@ set -euo pipefail
 HERE="$(cd -- "$(dirname -- "$0")" && pwd)"
 TARGET="${XDG_DATA_HOME:-$HOME/.local/share}/focusfield/app"
 mkdir -p "$TARGET/assets" "${XDG_DATA_HOME:-$HOME/.local/share}/applications" "$HOME/.local/bin"
-cp "$HERE/app.py" "$HERE/core.py" "$HERE/run.sh" "$TARGET/"
+cp "$HERE/app.py" "$HERE/core.py" "$HERE/themes.py" "$HERE/run.sh" "$TARGET/"
 cp "$HERE/assets/focusfield.png" "$TARGET/assets/"
 chmod +x "$TARGET/run.sh"
 cat > "$HOME/.local/bin/focusfield" <<EOF

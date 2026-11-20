@@ -11,6 +11,7 @@
 - **Real tasks:** add tasks, choose which task you're working on, mark complete, or remove tasks.
 - **Local statistics:** daily focus time, session goal, seven-day chart, session history, and lifetime totals.
 - **Desktop integration:** Linux notifications on supported desktops, optional bell, launcher icon, optional always-on-top.
+- **Your colors:** light and dark modes with Coral, Ocean, Forest, and Lavender themes, saved automatically.
 - **Easy to customize:** timer lengths, daily goal, auto-start behavior, notifications, sounds.
 - **Private by default:** data is saved on your computer in a human-readable JSON file. No account or telemetry.
 - **Works offline:** no internet is needed after installation.
@@ -18,9 +19,9 @@
 
 ## Downloads
 
-Tagged GitHub releases provide:
+[Download the latest release](https://github.com/rajeshshrestha/focusfield/releases/latest). Tagged releases provide:
 
-- `focusfield_1.0.0_all.deb` — Debian, Ubuntu, Linux Mint, and compatible systems. Install with `sudo apt install ./focusfield_1.0.0_all.deb`.
+- `focusfield_1.1.0_all.deb` — Debian, Ubuntu, Linux Mint, and compatible systems. Install with `sudo apt install ./focusfield_1.1.0_all.deb`.
 - `Focusfield_Linux_Portable.zip` — portable package for Fedora, Arch, and other Linux distributions (requires Python and Tkinter).
 
 ## Quick start on Ubuntu, Fedora, Mint and other Linux distros
@@ -57,6 +58,14 @@ To uninstall the application (but preserve your personal timer data), run `./uni
 - Completion automatically records a focus session and prepares the appropriate break.
 - Open **Your insights** to review your work; open **Preferences** to adjust your rhythm.
 
+### Appearance
+
+Open **Appearance** in the sidebar to choose **Light** or **Dark** and a **Coral**, **Ocean**, **Forest**, or **Lavender** theme. Use the sidebar’s **Switch to light / Switch to dark** button for a quick change on any page. Changes apply immediately and are remembered next time you launch. Your running timer, tasks, and unsaved preferences stay intact.
+
+![Light mode with the Ocean theme](assets/preview-light.png)
+
+![Appearance settings](assets/appearance.png)
+
 ### Keyboard shortcuts
 
 | Shortcut | Action |
@@ -91,6 +100,8 @@ Run the standard-library unit tests:
 ```bash
 python3 -m unittest discover -s tests -v
 ```
+
+GUI tests run when a display is available; for a headless machine, use `xvfb-run -a python3 -m unittest discover -s tests -v` (requires Xvfb and Tkinter).
 
 The application is fully offline and written in Python with Tkinter. No third-party packages or services are required at runtime.
 

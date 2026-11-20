@@ -9,6 +9,7 @@ from copy import deepcopy
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any, Optional
+from themes import CHOICE_SETTINGS
 
 APP_NAME = "Focusfield"
 MODES = ("focus", "short_break", "long_break")
@@ -23,6 +24,8 @@ DEFAULT_SETTINGS = {
     "desktop_notifications": True,
     "sound": True,
     "always_on_top": False,
+    "color_mode": "dark",
+    "theme": "coral",
 }
 BOUNDS = {
     "focus_minutes": (1, 180),
@@ -97,6 +100,8 @@ class FocusEngine:
                     value = settings.get(name, original)
                     if name in BOUNDS:
                         self.settings[name] = safe_int(value, original, *BOUNDS[name])
+                    elif name in CHOICE_SETTINGS:
+                        self.settings[name] = value if value in CHOICE_SETTINGS[name] else original
                     else:
                         self.settings[name] = value if type(value) is bool else original
             tasks = data.get("tasks", [])
@@ -201,20 +206,22 @@ class FocusEngine:
     def apply_settings(self, changes: dict) -> None:
         old_duration = self.duration()
         old_remaining = self.seconds_remaining()
-        was_running = self.running
-        self.pause()
         for key, value in changes.items():
             if key not in DEFAULT_SETTINGS:
                 continue
             if key in BOUNDS:
                 self.settings[key] = safe_int(value, self.settings[key], *BOUNDS[key])
+            elif key in CHOICE_SETTINGS:
+                if value in CHOICE_SETTINGS[key]:
+                    self.settings[key] = value
             elif type(value) is bool:
                 self.settings[key] = value
         new_duration = self.duration()
-        # Preserve elapsed time when durations are edited; never go negative.
-        self.remaining = max(1.0, min(float(new_duration), float(new_duration) - (old_duration - old_remaining)))
-        if was_running:
-            self.start()
+        # Appearance and other non-duration changes leave the live deadline intact.
+        if new_duration != old_duration:
+            self.remaining = max(1.0, min(float(new_duration), float(new_duration) - (old_duration - old_remaining)))
+            if self.running:
+                self._end_time = self.clock() + self.remaining
         self.save()
 
     def add_task(self, title: str) -> Optional[str]:

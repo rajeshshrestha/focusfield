@@ -17,6 +17,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Compile sources
-        run: python -m py_compile app.py core.py
-      - name: Run unit tests
-        run: python -m unittest discover -s tests -v
+        run: python -m py_compile app.py core.py themes.py
+      - name: Install virtual display
+        run: sudo apt-get update && sudo apt-get install -y xvfb python3-tk
+      - name: Run engine and GUI tests
+        run: xvfb-run -a python -m unittest discover -s tests -v

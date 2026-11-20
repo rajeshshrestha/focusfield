@@ -7,6 +7,9 @@ cd "$ROOT"
 OWNER="rajeshshrestha"
 REPO="focusfield"
 FULL="$OWNER/$REPO"
+VERSION="$(tr -d '[:space:]' < VERSION)"
+[[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Invalid VERSION" >&2; exit 1; }
+TAG="v$VERSION"
 
 if ! command -v gh >/dev/null 2>&1; then
   echo 'Install GitHub CLI (gh) first: https://cli.github.com/' >&2
@@ -45,6 +48,6 @@ case "$REMOTE" in
 esac
 
 git push -u origin main
-git push origin v1.0.0
-printf '\nPublished source and v1.0.0 tag to https://github.com/%s\n' "$FULL"
+git push origin "$TAG"
+printf '\nPublished source and %s tag to https://github.com/%s\n' "$TAG" "$FULL"
 echo 'GitHub Actions will build and attach release assets to the tagged release.'

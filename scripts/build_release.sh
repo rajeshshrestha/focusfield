@@ -9,7 +9,7 @@ OUT="${1:-$ROOT/dist}"
 mkdir -p "$OUT"
 OUT="$(cd "$OUT" && pwd)"
 
-for file in app.py core.py README.md CHANGELOG.md run.sh install.sh uninstall.sh assets/focusfield.png; do
+for file in app.py core.py themes.py README.md CHANGELOG.md run.sh install.sh uninstall.sh assets/focusfield.png; do
   test -f "$ROOT/$file" || { echo "Missing: $file" >&2; exit 1; }
 done
 
@@ -22,9 +22,10 @@ from zipfile import ZipFile, ZIP_DEFLATED
 root = Path(os.environ["ROOT"])
 out = Path(os.environ["OUT"]) / "Focusfield_Linux_Portable.zip"
 files = [
-    "app.py", "core.py", "README.md", "CHANGELOG.md",
-    "run.sh", "install.sh", "uninstall.sh", "VERSION", "tests/test_core.py",
+    "app.py", "core.py", "themes.py", "README.md", "CHANGELOG.md",
+    "run.sh", "install.sh", "uninstall.sh", "VERSION",
 ]
+files += [str(p.relative_to(root)) for p in sorted((root / "tests").glob("test_*.py"))]
 files += [str(p.relative_to(root)) for p in sorted((root / "assets").glob("*.png"))]
 with ZipFile(out, "w", compression=ZIP_DEFLATED, compresslevel=9) as archive:
     for name in files:
@@ -42,7 +43,7 @@ trap 'rm -rf -- "$TMP"' EXIT
 mkdir -p "$TMP/DEBIAN" "$TMP/usr/bin" "$TMP/usr/share/focusfield/assets" \
          "$TMP/usr/share/applications" "$TMP/usr/share/doc/focusfield" \
          "$TMP/usr/share/icons/hicolor/256x256/apps"
-install -m 644 "$ROOT/app.py" "$ROOT/core.py" "$TMP/usr/share/focusfield/"
+install -m 644 "$ROOT/app.py" "$ROOT/core.py" "$ROOT/themes.py" "$TMP/usr/share/focusfield/"
 install -m 644 "$ROOT/assets/focusfield.png" "$TMP/usr/share/focusfield/assets/"
 install -m 644 "$ROOT/assets/focusfield.png" "$TMP/usr/share/icons/hicolor/256x256/apps/"
 install -m 644 "$ROOT/README.md" "$ROOT/CHANGELOG.md" "$TMP/usr/share/doc/focusfield/"
