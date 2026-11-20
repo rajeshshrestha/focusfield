@@ -1,0 +1,42 @@
+name: Linux release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile sources and run tests
+        run: |
+          python3 -m py_compile app.py core.py
+          python3 -m unittest discover -s tests -v
+      - name: Build Linux release assets
+        run: |
+          VERSION="$(cat VERSION)"
+          test "$GITHUB_REF_NAME" = "v$VERSION"
+          ./scripts/build_release.sh
+          dpkg-deb --info "dist/focusfield_${VERSION}_all.deb"
+          unzip -t dist/Focusfield_Linux_Portable.zip
+          (cd dist && sha256sum --check SHA256SUMS)
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="$(cat VERSION)"
+          NOTES=(--generate-notes)
+          if [[ -f "docs/releases/$GITHUB_REF_NAME.md" ]]; then
+            NOTES=(--notes-file "docs/releases/$GITHUB_REF_NAME.md")
+          fi
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/focusfield_${VERSION}_all.deb" \
+            dist/Focusfield_Linux_Portable.zip \
+            dist/SHA256SUMS \
+            --title "Focusfield $GITHUB_REF_NAME" \
+            "${NOTES[@]}"
